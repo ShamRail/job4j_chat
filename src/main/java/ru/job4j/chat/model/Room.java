@@ -15,7 +15,6 @@ public class Room {
     private String name;
 
     @ManyToOne
-    @Column(name = "creator_id")
     private Person creator;
 
     @ManyToMany
@@ -26,6 +25,10 @@ public class Room {
     public Room(String name, Person creator) {
         this.name = name;
         this.creator = creator;
+    }
+
+    public Room(int id) {
+        this.id = id;
     }
 
     public int getId() {
@@ -77,5 +80,14 @@ public class Room {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, creator);
+    }
+
+    @Override
+    public String toString() {
+        return "Room{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", creator=" + creator
+                + '}';
     }
 }

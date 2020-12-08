@@ -32,6 +32,10 @@ public class Person {
 
     public Person() { }
 
+    public Person(int id) {
+        this.id = id;
+    }
+
     public Person(String name, String email, String password) {
         this.name = name;
         this.email = email;
@@ -88,5 +92,15 @@ public class Person {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, email, password);
+    }
+
+    @Override
+    public String toString() {
+        return "Person{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", email='" + email + '\''
+                + ", password='" + password + '\''
+                + '}';
     }
 }

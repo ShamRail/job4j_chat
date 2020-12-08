@@ -16,17 +16,21 @@ public class Message {
 
     private String text;
 
-    private LocalDateTime createDate;
+    private LocalDateTime createDate = LocalDateTime.now();
 
     @ManyToOne
-    @Column(name = "author_id")
     private Person author;
 
     @ManyToOne
-    @Column(name = "room_id")
     private Room room;
 
     public Message() { }
+
+    public Message(String text, @NotNull Person author, @NotNull Room room) {
+        this.text = text;
+        this.author = author;
+        this.room = room;
+    }
 
     public Message(String text, LocalDateTime createDate, @NotNull Person author, @NotNull Room room) {
         this.text = text;
@@ -92,5 +96,16 @@ public class Message {
     @Override
     public int hashCode() {
         return Objects.hash(id, author, room);
+    }
+
+    @Override
+    public String toString() {
+        return "Message{"
+                + "id=" + id
+                + ", text='" + text + '\''
+                + ", createDate=" + createDate
+                + ", author=" + author
+                + ", room=" + room
+                + '}';
     }
 }
