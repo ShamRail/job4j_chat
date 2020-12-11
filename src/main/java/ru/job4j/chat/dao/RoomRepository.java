@@ -12,6 +12,12 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     List<Room> findByCreator(Person person);
 
+    @Query(
+            nativeQuery = true,
+            value = "select * from room where id in (select room_id from participation p where p.person_id = :person)"
+    )
+    List<Room> findByParticipantsContains(Person person);
+
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(
             nativeQuery = true,
@@ -25,5 +31,19 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             value = "insert into participation values(:person, :room)"
     )
     int addRelation(Person person, Room room);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(
+            nativeQuery = true,
+            value = "delete from participation p where p.room_id = :room"
+    )
+    int removeRelationByRoom(Room room);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(
+            nativeQuery = true,
+            value = "delete from participation p where p.person_id = :person"
+    )
+    int removeRelationByPerson(Person person);
 
 }

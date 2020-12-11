@@ -95,6 +95,32 @@ public class MessageRepositoryTest {
     }
 
     @Test
+    public void wheDeleteByAuthor() {
+        Person author = personDB.save(personDB.save(new Person(1)));
+        Room room = roomDB.save(roomDB.save(new Room(1)));
+        Message message1 = new Message("msg1", author, room);
+        Message message2 = new Message("msg2", author, room);
+        Message message3 = new Message("msg3", author, room);
+        List<Message> messages = List.of(message1, message2, message3);
+        messageDB.saveAll(messages);
+        Assert.assertEquals(3, messageDB.deleteAllByAuthor(author));
+        Assert.assertEquals(List.of(), messageDB.findByAuthor(author));
+    }
+
+    @Test
+    public void wheDeleteByRoom() {
+        Person author = personDB.save(personDB.save(new Person(1)));
+        Room room = roomDB.save(roomDB.save(new Room(1)));
+        Message message1 = new Message("msg1", author, room);
+        Message message2 = new Message("msg2", author, room);
+        Message message3 = new Message("msg3", author, room);
+        List<Message> messages = List.of(message1, message2, message3);
+        messageDB.saveAll(messages);
+        Assert.assertEquals(3, messageDB.deleteAllByRoom(room));
+        Assert.assertEquals(List.of(), messageDB.findByRoom(room));
+    }
+
+    @Test
     public void whenFindByTimePeriod() {
         Person author = personDB.save(personDB.save(new Person(1)));
         Room room = roomDB.save(roomDB.save(new Room(1)));

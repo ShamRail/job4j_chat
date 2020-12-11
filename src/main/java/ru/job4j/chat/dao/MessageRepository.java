@@ -12,10 +12,16 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 
     List<Message> findByAuthor(Person person);
 
+    List<Message> findByRoom(Room room);
+
     List<Message> findByCreateDateBetween(LocalDateTime begin, LocalDateTime end);
 
     List<Message> findByAuthorAndRoomAndCreateDateBetween(
             Person author, Room room, LocalDateTime begin, LocalDateTime end
     );
+
+    int deleteAllByAuthor(Person author);
+
+    int deleteAllByRoom(Room room);
 
 }

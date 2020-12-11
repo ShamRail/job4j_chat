@@ -94,6 +94,34 @@ public class RoomRepositoryTest {
     }
 
     @Test
+    public void whenDeleteFromParticipationByRoom() {
+        Person person1 = personDB.save(new Person(1));
+        Person person2 = personDB.save(new Person(2));
+        Room room = roomDB.save(new Room(1));
+        roomDB.addRelation(person1, room);
+        roomDB.addRelation(person2, room);
+        Assert.assertTrue(roomDB.removeRelationByRoom(room) != 0);
+        Assert.assertEquals(
+                List.of(),
+                personDB.findByRoomsContains(room)
+        );
+    }
+
+    @Test
+    public void whenDeleteFromParticipationByPerson() {
+        Person person1 = personDB.save(new Person(1));
+        Person person2 = personDB.save(new Person(2));
+        Room room = roomDB.save(new Room(1));
+        roomDB.addRelation(person1, room);
+        roomDB.addRelation(person2, room);
+        Assert.assertTrue(roomDB.removeRelationByPerson(person1) != 0);
+        Assert.assertEquals(
+                List.of(person2),
+                personDB.findByRoomsContains(room)
+        );
+    }
+
+    @Test
     public void whenLoadByCreator() {
         Person person1 = personDB.save(new Person(1));
         Person person2 = personDB.save(new Person(2));
@@ -109,6 +137,27 @@ public class RoomRepositoryTest {
         );
         Assert.assertEquals(
                 List.of(room3), roomDB.findByCreator(person2)
+        );
+    }
+
+    @Test
+    public void whenLoadByParticipator() {
+        Person person1 = personDB.save(new Person(1));
+        Person person2 = personDB.save(new Person(2));
+        Room room1 = new Room(1);
+        Room room2 = new Room(2);
+        Room room3 = new Room(3);
+        roomDB.saveAll(List.of(room1, room2, room3));
+        roomDB.addRelation(person1, room1);
+        roomDB.addRelation(person1, room2);
+        roomDB.addRelation(person1, room3);
+        roomDB.addRelation(person2, room1);
+        roomDB.addRelation(person2, room3);
+        Assert.assertEquals(
+                List.of(room1, room2, room3), roomDB.findByParticipantsContains(person1)
+        );
+        Assert.assertEquals(
+                List.of(room1, room3), roomDB.findByParticipantsContains(person2)
         );
     }
 
