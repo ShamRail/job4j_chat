@@ -33,10 +33,10 @@ public class PersonServiceImpl implements PersonService {
     @Transactional
     public void delete(Person entity) {
         messageService.deleteAllByAuthor(entity);
-        List<Room> userCreated = roomService.loadUserCreatedRooms(entity);
-        userCreated.forEach(room -> roomService.delete(room));
         List<Room> userParticipated = roomService.loadUserParticipatedRooms(entity);
         userParticipated.forEach(room -> roomService.leaveRoom(room, entity));
+        List<Room> userCreated = roomService.loadUserCreatedRooms(entity);
+        userCreated.forEach(room -> roomService.delete(room));
         personDB.delete(entity);
     }
 

@@ -1,6 +1,9 @@
 package ru.job4j.chat.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import ru.job4j.chat.model.Message;
 import ru.job4j.chat.model.Person;
 import ru.job4j.chat.model.Room;
@@ -22,6 +25,6 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 
     int deleteAllByAuthor(Person author);
 
-    int deleteAllByRoom(Room room);
+    int deleteByRoom(Room room);
 
 }

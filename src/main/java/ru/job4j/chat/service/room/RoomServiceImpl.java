@@ -26,7 +26,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room saveOrUpdate(Room entity) {
-        return roomDB.saveAndFlush(entity);
+        Room result = roomDB.saveAndFlush(entity);
+        joinRoom(entity, entity.getCreator());
+        return result;
     }
 
     @Override

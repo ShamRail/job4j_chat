@@ -51,7 +51,9 @@ public class RoomController {
     @GetMapping("/all")
     public List<Room> getUserRooms(@PathVariable int personId) {
         Person person = personService.findById(personId).orElseThrow(ResourceNotFoundException::new);
-        return roomService.loadUserCreatedRooms(person);
+        List<Room> userCreatedRooms = roomService.loadUserCreatedRooms(person);
+        userCreatedRooms.addAll(roomService.loadUserParticipatedRooms(person));
+        return userCreatedRooms;
     }
 
     @PutMapping("/join")

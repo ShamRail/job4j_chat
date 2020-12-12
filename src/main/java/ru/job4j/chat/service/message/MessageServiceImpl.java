@@ -64,7 +64,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public int deleteAllByRoom(Room room) {
-        return messageDB.deleteAllByRoom(room);
+        return messageDB.deleteByRoom(room);
     }
 
 }

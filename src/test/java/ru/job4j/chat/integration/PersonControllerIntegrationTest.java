@@ -99,8 +99,9 @@ public class PersonControllerIntegrationTest {
     @Test
     public void whenDeletePersonThenDeleteAllRelated() {
         Person person = personService.saveOrUpdate(new Person("name", "email", "password"));
+        Person person2 = personService.saveOrUpdate(new Person("name", "email", "password"));
         Room personRoom = roomService.saveOrUpdate(new Room("room", person));
-        Room personJoined = roomService.saveOrUpdate(new Room("room"));
+        Room personJoined = roomService.saveOrUpdate(new Room("room", person2));
         roomService.joinRoom(personJoined, person);
         Message message1 = messageService.saveOrUpdate(new Message("msg1", person, personRoom));
         Message message2 = messageService.saveOrUpdate(new Message("msg1", person, personJoined));
@@ -108,7 +109,7 @@ public class PersonControllerIntegrationTest {
         Assert.assertEquals(Optional.empty(), messageService.findById(message1.getId()));
         Assert.assertEquals(Optional.empty(), messageService.findById(message2.getId()));
         Assert.assertEquals(Optional.empty(), roomService.findById(personRoom.getId()));
-        Assert.assertEquals(List.of(), roomService.loadParticipants(personJoined));
+        Assert.assertEquals(List.of(person2), roomService.loadParticipants(personJoined));
         Assert.assertEquals(Optional.of(personJoined), roomService.findById(personJoined.getId()));
         Assert.assertEquals(Optional.empty(), personService.findById(person.getId()));
     }

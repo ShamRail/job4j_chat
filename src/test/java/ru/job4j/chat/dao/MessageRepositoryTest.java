@@ -116,7 +116,7 @@ public class MessageRepositoryTest {
         Message message3 = new Message("msg3", author, room);
         List<Message> messages = List.of(message1, message2, message3);
         messageDB.saveAll(messages);
-        Assert.assertEquals(3, messageDB.deleteAllByRoom(room));
+        Assert.assertEquals(3, messageDB.deleteByRoom(room));
         Assert.assertEquals(List.of(), messageDB.findByRoom(room));
     }
 
