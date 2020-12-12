@@ -21,11 +21,12 @@ public class PersonController {
     }
 
     @PutMapping
-    public void updatePerson(@RequestParam int id) {
-        if (personService.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException();
-        }
-        personService.saveOrUpdate(new Person(id));
+    public void updatePerson(@RequestParam int id, @RequestBody Person updated) {
+        Person person = personService.findById(id).orElseThrow(ResourceNotFoundException::new);
+        person.setPassword(updated.getPassword());
+        person.setName(updated.getName());
+        person.setEmail(updated.getEmail());
+        personService.saveOrUpdate(person);
     }
 
     @DeleteMapping

@@ -3,6 +3,7 @@ package ru.job4j.chat.dao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import ru.job4j.chat.model.Person;
 import ru.job4j.chat.model.Room;
 
@@ -18,6 +19,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     )
     List<Room> findByParticipantsContains(Person person);
 
+    @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(
             nativeQuery = true,
@@ -25,6 +27,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     )
     int removeRelation(Room room, Person person);
 
+    @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(
             nativeQuery = true,
@@ -32,6 +35,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     )
     int addRelation(Person person, Room room);
 
+    @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(
             nativeQuery = true,
@@ -39,6 +43,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     )
     int removeRelationByRoom(Room room);
 
+    @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(
             nativeQuery = true,
