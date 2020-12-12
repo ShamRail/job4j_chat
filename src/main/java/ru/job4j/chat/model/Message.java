@@ -1,5 +1,6 @@
 package ru.job4j.chat.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
@@ -25,6 +26,10 @@ public class Message {
     private Room room;
 
     public Message() { }
+
+    public Message(String text) {
+        this.text = text;
+    }
 
     public Message(String text, @NotNull Person author, @NotNull Room room) {
         this.text = text;
