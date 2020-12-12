@@ -1,7 +1,8 @@
 package ru.job4j.chat.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.istack.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,7 +18,8 @@ public class Message {
 
     private String text;
 
-    private LocalDateTime createDate = LocalDateTime.now();
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime createDate;
 
     @ManyToOne
     private Person author;
