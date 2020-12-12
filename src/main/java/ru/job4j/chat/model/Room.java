@@ -1,5 +1,7 @@
 package ru.job4j.chat.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -18,9 +20,14 @@ public class Room {
     private Person creator;
 
     @ManyToMany
+    @JsonIgnore
     private List<Person> participants;
 
     public Room() { }
+
+    public Room(String name) {
+        this.name = name;
+    }
 
     public Room(String name, Person creator) {
         this.name = name;

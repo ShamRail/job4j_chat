@@ -1,5 +1,7 @@
 package ru.job4j.chat.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +20,7 @@ public class Person {
 
     private String password;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "participation",
