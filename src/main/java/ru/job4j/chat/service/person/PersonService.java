@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface PersonService extends CRUD<Person> {
     List<Person> findByRoomsContains(Room room);
+    Person findByName(String name);
 }

@@ -5,11 +5,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.job4j.chat.config.Profiles;
 import ru.job4j.chat.model.Person;
 import ru.job4j.chat.service.person.PersonService;
 
@@ -22,7 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(PersonController.class)
+@WebMvcTest(value = PersonController.class)
+@ActiveProfiles(value = {Profiles.NO_AUTH})
 public class PersonControllerTest {
 
     @Autowired
@@ -33,14 +40,18 @@ public class PersonControllerTest {
 
     private final ObjectMapper jsonConverter = new ObjectMapper();
 
+    @MockBean
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Test
     public void whenPost() throws Exception {
         Person person = new Person("name", "email", "password");
+        Mockito.when(bCryptPasswordEncoder.encode(person.getPassword())).thenReturn(person.getPassword());
         Mockito.when(personService.saveOrUpdate(person)).thenReturn(person);
         mvc.perform(
-                post("/person")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonConverter.writeValueAsString(person))
+                post("/person/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonConverter.writeValueAsString(person))
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -128,3 +139,4 @@ public class PersonControllerTest {
     }
 
 }
+

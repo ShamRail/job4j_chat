@@ -10,6 +10,6 @@ import java.util.List;
 public interface PersonRepository extends JpaRepository<Person, Integer> {
 
     List<Person> findByRoomsContains(Room room);
-
+    Person findByName(String name);
 
 }

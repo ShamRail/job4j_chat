@@ -1,20 +1,28 @@
 package ru.job4j.chat.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.job4j.chat.config.Profiles;
 import ru.job4j.chat.model.Person;
 import ru.job4j.chat.model.Room;
 import ru.job4j.chat.service.person.PersonService;
 import ru.job4j.chat.service.room.RoomService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +32,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(RoomController.class)
+@WebMvcTest(value = RoomController.class)
+@ActiveProfiles(value = {Profiles.NO_AUTH})
 public class RoomControllerTest {
 
     @Autowired
@@ -226,8 +235,9 @@ public class RoomControllerTest {
         Room room2 = new Room("room2", person);
         Room room3 = new Room("room3", person);
         Mockito.when(personService.findById(1)).thenReturn(Optional.of(person));
-        List<Room> rooms = List.of(room1, room2, room3);
+        List<Room> rooms = Arrays.asList(room1, room2, room3);
         Mockito.when(roomService.loadUserCreatedRooms(person)).thenReturn(rooms);
+        Mockito.when(roomService.loadUserParticipatedRooms(person)).thenReturn(new ArrayList<>());
         mvc.perform(
                 get("/person/1/room/all"))
                 .andExpect(status().isOk())

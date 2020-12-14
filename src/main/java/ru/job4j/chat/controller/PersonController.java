@@ -1,6 +1,7 @@
 package ru.job4j.chat.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.chat.controller.exception.ResourceNotFoundException;
 import ru.job4j.chat.model.Person;
@@ -15,9 +16,18 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @PostMapping
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @PostMapping("/register")
     public Person savePerson(@RequestBody Person person) {
+        person.setPassword(bCryptPasswordEncoder.encode(person.getPassword()));
         return personService.saveOrUpdate(person);
+    }
+
+    @PostMapping("/login")
+    public Person loginPerson(@RequestBody Person person) {
+        return personService.findByName(person.getName());
     }
 
     @PutMapping

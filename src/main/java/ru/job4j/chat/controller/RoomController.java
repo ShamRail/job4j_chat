@@ -8,6 +8,8 @@ import ru.job4j.chat.model.Room;
 import ru.job4j.chat.service.person.PersonService;
 import ru.job4j.chat.service.room.RoomService;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @RestController
@@ -49,11 +51,12 @@ public class RoomController {
     }
 
     @GetMapping("/all")
-    public List<Room> getUserRooms(@PathVariable int personId) {
+    public Iterable<Room> getUserRooms(@PathVariable int personId) {
         Person person = personService.findById(personId).orElseThrow(ResourceNotFoundException::new);
         List<Room> userCreatedRooms = roomService.loadUserCreatedRooms(person);
-        userCreatedRooms.addAll(roomService.loadUserParticipatedRooms(person));
-        return userCreatedRooms;
+        List<Room> userParticipatedRooms = roomService.loadUserParticipatedRooms(person);
+        userCreatedRooms.addAll(userParticipatedRooms);
+        return new LinkedHashSet<>(userCreatedRooms);
     }
 
     @PutMapping("/join")

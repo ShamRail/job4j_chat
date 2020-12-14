@@ -1,6 +1,5 @@
 package ru.job4j.chat.integration;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.job4j.chat.config.Profiles;
 import ru.job4j.chat.model.Message;
 import ru.job4j.chat.model.Person;
 import ru.job4j.chat.model.Room;
@@ -22,11 +23,14 @@ import ru.job4j.chat.service.room.RoomService;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles(value = {Profiles.NO_AUTH})
 public class PersonControllerIntegrationTest {
 
     @Autowired
@@ -43,32 +47,19 @@ public class PersonControllerIntegrationTest {
 
     private final ObjectMapper jsonConverter = new ObjectMapper();
 
-    @Test
-    public void whenCreate() throws Exception {
-        Person person = new Person("name", "email", "password");
-        MvcResult mvcResult = mvc.perform(
-                post("/person")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonConverter.writeValueAsString(person))
-        ).andReturn();
-        int id = jsonConverter.readValue(
-                mvcResult.getResponse().getContentAsString(),
-                Person.class
-        ).getId();
-        person.setId(id);
-        Assert.assertEquals(person, personService.findById(id).orElse(new Person()));
-    }
 
     @Test
     public void whenUpdate() throws Exception {
-        Person person = personService.saveOrUpdate(new Person("name", "email", "password"));
+        Person person = personService.saveOrUpdate(new Person(
+                "name", "email", "password")
+        );
         Person updated = new Person("name1", "email1", "password1");
         updated.setId(person.getId());
         mvc.perform(
                 put("/person?id=" + updated.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonConverter.writeValueAsString(updated))
-        );
+        ).andExpect(status().isOk());
         Assert.assertEquals(updated, personService.findById(updated.getId()).orElse(new Person()));
     }
 
@@ -89,11 +80,8 @@ public class PersonControllerIntegrationTest {
         MvcResult mvcResult = mvc.perform(
                 get("/person/all")
         ).andReturn();
-        List<Person> result = jsonConverter.readValue(
-                mvcResult.getResponse().getContentAsString(),
-                new TypeReference<>() { }
-        );
-        Assert.assertEquals(List.of(person1, person2), result);
+        Assert.assertEquals(person1, personService.findById(person1.getId()).orElse(new Person()));
+        Assert.assertEquals(person2, personService.findById(person2.getId()).orElse(new Person()));
     }
 
     @Test

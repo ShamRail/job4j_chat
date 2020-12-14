@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.job4j.chat.config.Profiles;
 import ru.job4j.chat.model.Message;
 import ru.job4j.chat.model.Person;
 import ru.job4j.chat.model.Room;
@@ -34,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles(value = {Profiles.NO_AUTH})
 public class MessageControllerIntegrationTest {
 
     @Autowired
@@ -56,12 +59,14 @@ public class MessageControllerIntegrationTest {
         Person author = personService.saveOrUpdate(new Person("name", "email", "password"));
         Room room = roomService.saveOrUpdate(new Room("room", author));
         MessageDTO messageDTO = new MessageDTO("msg");
-        mvc.perform(
+        MvcResult result = mvc.perform(
                 post(String.format("/person/%d/room/%d/message", author.getId(), room.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonConverter.writeValueAsString(messageDTO))
         ).andReturn();
-        Message fromDB = messageService.findAll().get(0);
+        Message fromDB = messageService.findById(
+                jsonConverter.readValue(result.getResponse().getContentAsString(), Message.class).getId()
+        ).orElse(new Message());
         Assert.assertEquals(messageDTO.getText(), fromDB.getText());
         Assert.assertEquals(author, fromDB.getAuthor());
         Assert.assertEquals(room, fromDB.getRoom());

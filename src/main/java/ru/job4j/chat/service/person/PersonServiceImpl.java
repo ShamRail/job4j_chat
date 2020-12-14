@@ -54,4 +54,9 @@ public class PersonServiceImpl implements PersonService {
     public List<Person> findByRoomsContains(Room room) {
         return personDB.findByRoomsContains(room);
     }
+
+    @Override
+    public Person findByName(String name) {
+        return personDB.findByName(name);
+    }
 }
